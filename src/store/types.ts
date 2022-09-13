@@ -3,8 +3,13 @@ export interface IStore {
     from: string;
     to: string;
   };
+  selectedValutes: {
+    from: string;
+    to: string;
+  };
   actualDate: string;
-  currenciesData: [];
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  currenciesData: Object;
 }
 
-export type setInputData = { inputType: 'from' | 'to', value: string }
+export type setInputData = { type: 'from' | 'to', value: string }

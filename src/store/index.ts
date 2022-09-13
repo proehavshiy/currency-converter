@@ -10,14 +10,29 @@ export default createStore<IStore>({
       from: '',
       to: '',
     },
+    selectedValutes: {
+      from: '',
+      to: '',
+    },
     actualDate: '',
-    currenciesData: [],
+    currenciesData: {},
   }),
   getters: {
   },
   mutations: {
-    setInputData(state, { inputType, value }: setInputData) {
-      state.inputData[inputType] = value;
+    setInputData(state, { type, value }: setInputData) {
+      console.log('type:', type);
+      console.log('value:', value);
+
+      /// функция-конвертер
+
+      ///
+      state.inputData[type] = value;
+    },
+    setSelectedValutes(state, { type, value }: setInputData) {
+      console.log('type:', type);
+      console.log('value:', value);
+      state.selectedValutes[type] = value;
     },
     setActualDate(state, value) {
       const months = [
@@ -46,7 +61,18 @@ export default createStore<IStore>({
           console.log('response:', response);
           const { data } = response;
           commit('setActualDate', data.Date);
-          commit('setCurrenciesData', data.Valute);
+          commit('setCurrenciesData', {
+            ...data.Valute,
+            RUB: {
+              CharCode: 'RUB',
+              ID: 'R01235',
+              Name: 'Рубль РФ',
+              Nominal: 1,
+              NumCode: 1,
+              Previous: 1,
+              Value: 1,
+            },
+          });
         }
       } catch (e) {
         ///

@@ -35,23 +35,22 @@
             <div class="row mb-1">
               <div class="col">
                 <label for="selectFrom">Отдаю:
-                <select id="selectFrom" class="form-control">
-                  <option value="USD">USD — Доллар США</option>
-                  <option value="EUR">EUR — Евро</option>
-                  <option value="GBP">GPB — Фунт стерлингов</option>
-                  <option value="RUB" selected>RUB — Рубли</option>
-                  <option value="AMD">AMD — Armenia</option>
+                <select id="selectFrom" class="form-control" @change="(e)=>{
+                  setSelectedValutes({type: 'from', value: (e.target as HTMLInputElement).value})
+                }">
+                  <option :value="currency.CharCode" v-for="currency of currenciesData" :key="currency.ID">{{`${currency.CharCode} - ${currency.Name}`}}</option>
                 </select>
                 </label>
               </div>
               <div class="col">
                 <label for="selectTo">Получаю:
-                <select id="selectTo" class="form-control">
-                  <option value="USD">USD — Доллар США</option>
-                  <option value="EUR">EUR — Евро</option>
-                  <option value="GBP">GPB — Фунт стерлингов</option>
-                  <option value="RUB">RUB — Рубли</option>
-                  <option value="AMD">AMD — Armenia</option>
+                <select id="selectTo" class="form-control"
+                @change="(e)=>{
+                  setSelectedValutes({type: 'to', value: (e.target as HTMLInputElement).value})
+                }"
+                >
+                  <option :value="currency.CharCode" v-for="currency of currenciesData" :key="currency.ID">{{`${currency.CharCode} -
+                  ${currency.Name}`}}</option>
                 </select>
                 </label>
               </div>
@@ -60,12 +59,19 @@
             <div class="row">
               <div class="col">
                 <label for="input">
-                <input id="input" aria-labelledby="#id" type="number" class="form-control" />
+                <input id="input" aria-labelledby="#id" type="number" class="form-control" :value="currenciesData.from"
+                @input="(e) => {
+                  setInputData({type: 'from', value: (e.target as HTMLInputElement).value})
+                }"
+                />
                 </label>
               </div>
               <div class="col">
                 <label for="output">
-                  <input id="output" aria-labelledby="#id" type="number" class="form-control" />
+                  <input id="output" aria-labelledby="#id" type="number" class="form-control" v-model="currenciesData.to"
+                  @input="(e) => {
+                    setInputData({type: 'to', value: (e.target as HTMLInputElement).value})
+                  }"/>
                 </label>
               </div>
             </div>
@@ -83,6 +89,10 @@ import { mapActions, mapMutations, mapState } from 'vuex';
 export default defineComponent({
   name: 'App',
   components: {},
+  data() {
+    return {
+    };
+  },
   computed: {
     ...mapState({
       inputData: 'inputData',
@@ -92,6 +102,7 @@ export default defineComponent({
   methods: {
     ...mapMutations({
       setInputData: 'setInputData',
+      setSelectedValutes: 'setSelectedValutes',
     }),
     ...mapActions({
       fetchCurrencies: 'fetchCurrencies',
