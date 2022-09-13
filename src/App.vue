@@ -20,29 +20,11 @@
                   <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne"
                     data-bs-parent="#accordionExample">
                     <div class="course-items accordion-body">
-                      <div class="course-item card card-body">
-                        <div class="course-item-title">Курс USD</div>
-                        <div class="course-item-value" data-value="USD">--.--</div>
-                      </div>
-                      <div class="course-item card card-body">
-                        <div class="course-item-title">Курс EUR</div>
-                        <div class="course-item-value" data-value="EUR">--.--</div>
-                      </div>
-                      <div class="course-item card card-body">
-                        <div class="course-item-title">Курс GPB</div>
-                        <div class="course-item-value" data-value="GBP">--.--</div>
-                      </div>
-                      <div class="course-item card card-body">
-                        <div class="course-item-title">Курс GPB</div>
-                        <div class="course-item-value" data-value="GBP">--.--</div>
-                      </div>
-                      <div class="course-item card card-body">
-                        <div class="course-item-title">Курс GPB</div>
-                        <div class="course-item-value" data-value="GBP">--.--</div>
-                      </div>
-                      <div class="course-item card card-body">
-                        <div class="course-item-title">Курс GPB</div>
-                        <div class="course-item-value" data-value="GBP">--.--</div>
+                      <div class="course-item card card-body" v-for="course of currenciesData" :key="course.ID"
+                      data-bs-toggle="tooltip" data-bs-placement="top" :title="course.Name">
+                      <div class="course-item-title">{{course.CharCode}}</div>
+                        <div class="course-item-value" :class="getCurrencyFluctuation(course.Value, course.Previous) ? 'top' : 'top'">{{course.Value.toFixed(2)}}</div>
+                        <div class="col alert alert-warning alert-info" role="alert">Номинал: {{course.Nominal}}</div>
                       </div>
                     </div>
                   </div>
@@ -96,12 +78,35 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import HelloWorld from './components/HelloWorld.vue';
+import { mapActions, mapMutations, mapState } from 'vuex';
 
 export default defineComponent({
   name: 'App',
-  components: {
+  components: {},
+  computed: {
+    ...mapState({
+      inputData: 'inputData',
+      currenciesData: 'currenciesData',
+    }),
   },
+  methods: {
+    ...mapMutations({
+      setInputData: 'setInputData',
+    }),
+    ...mapActions({
+      fetchCurrencies: 'fetchCurrencies',
+    }),
+    getCurrencyFluctuation(curr: number, prev: number) {
+      // console.log('curr - prev:', !!(curr - prev));
+      return !!(curr - prev);
+    },
+  },
+  mounted() {
+    console.log('inputData:', this.inputData);
+    console.log('currenciesData:', this.currenciesData);
+    this.fetchCurrencies();
+  },
+
 });
 </script>
 
@@ -128,9 +133,13 @@ export default defineComponent({
   display: grid;
   /* grid-template-columns: repeat(auto-fit, minmax(50px, max-content)); */
   /* grid-template-columns: repeat(auto-fit, minmax(min-content, 50px)); */
-  grid-template-columns: repeat(auto-fit, minmax(120px, max-content));
+  grid-template-columns: repeat(auto-fit, minmax(min-content, 180px));
   row-gap: 10px;
   column-gap: 10px;
+}
+
+.course-item {
+  cursor: pointer;
 }
 
 .course-item-title {
@@ -156,3 +165,19 @@ export default defineComponent({
   color: rgb(255, 51, 51);
 }
 </style>
+
+function mapState(arg0: { inputData: (state: any) => any; }): any {
+  throw new Error('Function not implemented.');
+}
+
+function mapState(arg0: { inputData: (state: any) => any; }): any {
+  throw new Error('Function not implemented.');
+}
+
+function mapMutations(arg0: { setInputData: string; }): any {
+  throw new Error('Function not implemented.');
+}
+
+function mapActions(arg0: { fetchAnalyticsData: string; }): any {
+  throw new Error('Function not implemented.');
+}
