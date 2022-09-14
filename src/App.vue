@@ -7,8 +7,9 @@
         <div class="card p-3">
           <form>
             <h1 class="h2 mb-4">Конвертер валют</h1>
-<!-- accordeon with currencies rates -->
-            <div class="courses">
+            <course-rates :data="currenciesData"></course-rates>
+            <!-- accordeon with currencies rates -->
+            <!-- <div class="courses">
               <div class="accordion" id="accordionExample">
                 <div class="accordion-item">
                   <h2 class="accordion-header" id="headingOne">
@@ -30,28 +31,28 @@
                   </div>
                 </div>
               </div>
-            </div>
+            </div> -->
 
             <div class="row mb-1">
               <div class="col">
                 <label for="selectFrom">Отдаю:
-                <select id="selectFrom" class="form-control" @change="(e)=>{
-                  setSelectedValutes({type: 'from', value: (e.target as HTMLInputElement).value})
-                }">
-                  <option :value="currency.CharCode" v-for="currency of currenciesData" :key="currency.ID">{{`${currency.CharCode} - ${currency.Name}`}}</option>
-                </select>
+                  <select id="selectFrom" class="form-control" @change="(e)=>{
+                    setSelectedValutes({type: 'from', value: (e.target as HTMLInputElement).value})
+                  }">
+                    <option :value="currency.CharCode" v-for="currency of currenciesData" :key="currency.ID">
+                      {{`${currency.CharCode} - ${currency.Name}`}}</option>
+                  </select>
                 </label>
               </div>
               <div class="col">
                 <label for="selectTo">Получаю:
-                <select id="selectTo" class="form-control"
-                @change="(e)=>{
-                  setSelectedValutes({type: 'to', value: (e.target as HTMLInputElement).value})
-                }"
-                >
-                  <option :value="currency.CharCode" v-for="currency of currenciesData" :key="currency.ID">{{`${currency.CharCode} -
-                  ${currency.Name}`}}</option>
-                </select>
+                  <select id="selectTo" class="form-control" @change="(e)=>{
+                    setSelectedValutes({type: 'to', value: (e.target as HTMLInputElement).value})
+                  }">
+                    <option :value="currency.CharCode" v-for="currency of currenciesData" :key="currency.ID">
+                      {{`${currency.CharCode} -
+                      ${currency.Name}`}}</option>
+                  </select>
                 </label>
               </div>
             </div>
@@ -59,19 +60,18 @@
             <div class="row">
               <div class="col">
                 <label for="input">
-                <input id="input" aria-labelledby="#id" type="number" class="form-control" :value="currenciesData.from"
-                @input="(e) => {
-                  setInputData({type: 'from', value: (e.target as HTMLInputElement).value})
-                }"
-                />
+                  <input id="input" aria-labelledby="#id" type="number" class="form-control"
+                    :value="currenciesData.from" @input="(e) => {
+                      setInputData({type: 'from', value: (e.target as HTMLInputElement).value})
+                    }" />
                 </label>
               </div>
               <div class="col">
                 <label for="output">
-                  <input id="output" aria-labelledby="#id" type="number" class="form-control" v-model="currenciesData.to"
-                  @input="(e) => {
-                    setInputData({type: 'to', value: (e.target as HTMLInputElement).value})
-                  }"/>
+                  <input id="output" aria-labelledby="#id" type="number" class="form-control"
+                    v-model="currenciesData.to" @input="(e) => {
+                      setInputData({type: 'to', value: (e.target as HTMLInputElement).value})
+                    }" />
                 </label>
               </div>
             </div>
@@ -85,10 +85,13 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { mapActions, mapMutations, mapState } from 'vuex';
+import CourseRates from './components/CourseRates.vue';
 
 export default defineComponent({
   name: 'App',
-  components: {},
+  components: {
+    CourseRates,
+  },
   data() {
     return {
     };
@@ -116,6 +119,14 @@ export default defineComponent({
     console.log('inputData:', this.inputData);
     console.log('currenciesData:', this.currenciesData);
     this.fetchCurrencies();
+  },
+  watch: {
+    currenciesData() {
+      return typeof this.currenciesData;
+    },
+    'inputData.to': function () {
+      console.log('консоль:');
+    },
   },
 
 });
