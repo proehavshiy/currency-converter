@@ -7,32 +7,6 @@
         <div class="card p-3">
           <form>
             <h1 class="h2 mb-4">Конвертер валют</h1>
-            <course-rates :data="currenciesData"></course-rates>
-            <!-- accordeon with currencies rates -->
-            <!-- <div class="courses">
-              <div class="accordion" id="accordionExample">
-                <div class="accordion-item">
-                  <h2 class="accordion-header" id="headingOne">
-                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne"
-                      aria-expanded="true" aria-controls="collapseOne">
-                    Курсы валют на сегодня
-                    </button>
-                  </h2>
-                  <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne"
-                    data-bs-parent="#accordionExample">
-                    <div class="course-items accordion-body">
-                      <div class="course-item card card-body" v-for="course of currenciesData" :key="course.ID"
-                      data-bs-toggle="tooltip" data-bs-placement="top" :title="course.Name">
-                      <div class="course-item-title">{{course.CharCode}}</div>
-                        <div class="course-item-value" :class="getCurrencyFluctuation(course.Value, course.Previous) ? 'top' : 'top'">{{course.Value.toFixed(2)}}</div>
-                        <div class="col alert alert-warning alert-info" role="alert">Номинал: {{course.Nominal}}</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div> -->
-
             <div class="row mb-1">
               <div class="col">
                 <label for="selectFrom">Отдаю:
@@ -60,22 +34,19 @@
             <div class="row">
               <div class="col">
                 <label for="input">
-                  <input id="input" aria-labelledby="#id" type="number" class="form-control"
-                    :value="currenciesData.from" @input="(e) => {
-                      setInputData({type: 'from', value: (e.target as HTMLInputElement).value})
-                    }" />
+                  <input id="input" aria-labelledby="#id" type="number" class="form-control" :value="inputData.from"
+                    @input="handleInput" />
                 </label>
               </div>
               <div class="col">
                 <label for="output">
-                  <input id="output" aria-labelledby="#id" type="number" class="form-control"
-                    v-model="currenciesData.to" @input="(e) => {
-                      setInputData({type: 'to', value: (e.target as HTMLInputElement).value})
-                    }" />
+                  <input id="output" aria-labelledby="#id" type="number" class="form-control" :value="inputData.to"
+                    @input="handleOutput" />
                 </label>
               </div>
             </div>
           </form>
+          <course-rates :data="currenciesData"></course-rates>
         </div>
       </div>
     </div>
@@ -110,9 +81,11 @@ export default defineComponent({
     ...mapActions({
       fetchCurrencies: 'fetchCurrencies',
     }),
-    getCurrencyFluctuation(curr: number, prev: number) {
-      // console.log('curr - prev:', !!(curr - prev));
-      return !!(curr - prev);
+    handleInput(e) {
+      this.setInputData({ type: 'from', value: (e.target as HTMLInputElement).value });
+    },
+    handleOutput(e) {
+      this.setInputData({ type: 'to', value: (e.target as HTMLInputElement).value });
     },
   },
   mounted() {
@@ -121,11 +94,13 @@ export default defineComponent({
     this.fetchCurrencies();
   },
   watch: {
-    currenciesData() {
-      return typeof this.currenciesData;
-    },
+    // currenciesData() {
+    //   console.log('typeof this.currenciesData:', typeof this.currenciesData);
+    //   console.log('this.currenciesData:', this.currenciesData);
+    //   return typeof this.currenciesData;
+    // },
     'inputData.to': function () {
-      console.log('консоль:');
+      console.log('консоль:', this.inputData.to);
     },
   },
 

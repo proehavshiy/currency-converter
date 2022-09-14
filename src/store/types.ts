@@ -8,9 +8,11 @@ CharCode: string;
     Value: number;
 }
 
-export interface ICurrenciesData {
-  [key: string]: ICurrencyData
-}
+// export interface ICurrenciesData {
+//   [key: string]: ICurrencyData
+// }
+
+export type ICurrenciesData = ICurrencyData[];
 
 export interface IStore {
   inputData: {

@@ -2,11 +2,14 @@
 /* eslint-disable no-mixed-operators */
 import { createStore } from 'vuex';
 import axios from 'axios';
-import { IStore, setInputData } from './types';
+import { ICurrencyData, IStore, setInputData } from './types';
 
 const API_URL = 'https://www.cbr-xml-daily.ru/daily_json.js';
 
-function convertValue(fromValue: any, fromObj: any, toObj: any) {
+function convertValue(fromValue: number, fromObj: ICurrencyData, toObj: ICurrencyData) {
+  console.log('fromValue:', fromValue);
+  console.log('fromObj:', fromObj);
+  console.log('toObj:', toObj);
   let result = null;
 
   // считаем если число не 0
@@ -32,32 +35,27 @@ export default createStore<IStore>({
       to: '',
     },
     actualDate: '',
-    currenciesData: {},
+    currenciesData: [],
   }),
   getters: {
   },
   mutations: {
     setInputData(state, { type, value }: setInputData) {
-      console.log('type:', type);
-      console.log('value:', value);
-
-      ///
       state.inputData[type] = value;
+
+      /// функция-конвертер
+      const fromValue = state.currenciesData.find((el) => el.CharCode === state.selectedValutes.from);
+      const toValue = state.currenciesData.find((el) => el.CharCode === state.selectedValutes.to);
       if (type === 'from') {
-        /// функция-конвертер
-        const convertedVal = convertValue(value, state.currenciesData[state.selectedValutes.from], state.currenciesData[state.selectedValutes.to]);
-        console.log('convertedVal from:', convertedVal);
+        const convertedVal = convertValue(Number(value), fromValue, toValue);
         state.inputData.to = convertedVal;
       }
       if (type === 'to') {
-        const convertedVal = convertValue(value, state.currenciesData[state.selectedValutes.to], state.currenciesData[state.selectedValutes.from]);
-        console.log('convertedVal to:', convertedVal);
+        const convertedVal = convertValue(Number(value), toValue, fromValue);
         state.inputData.from = convertedVal;
       }
     },
     setSelectedValutes(state, { type, value }: setInputData) {
-      console.log('type:', type);
-      console.log('value:', value);
       state.selectedValutes[type] = value;
     },
     setActualDate(state, value) {
@@ -84,12 +82,12 @@ export default createStore<IStore>({
       try {
         const response = await axios.get(API_URL);
         if (response.status === 200) {
-          console.log('response:', response);
+          // console.log('response:', response);
           const { data } = response;
           commit('setActualDate', data.Date);
-          commit('setCurrenciesData', {
-            ...data.Valute,
-            RUB: {
+          commit('setCurrenciesData', [
+            ...Object.values(data.Valute),
+            {
               CharCode: 'RUB',
               ID: 'R01235',
               Name: 'Рубль РФ',
@@ -98,8 +96,22 @@ export default createStore<IStore>({
               Previous: 1,
               Value: 1,
             },
-          });
+          ]);
         }
+
+        //   commit('setCurrenciesData', {
+        //     ...data.Valute,
+        //     RUB: {
+        //       CharCode: 'RUB',
+        //       ID: 'R01235',
+        //       Name: 'Рубль РФ',
+        //       Nominal: 1,
+        //       NumCode: 1,
+        //       Previous: 1,
+        //       Value: 1,
+        //     },
+        //   });
+        // }
       } catch (e) {
         ///
       } finally {
