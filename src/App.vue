@@ -1,3 +1,4 @@
+<!-- eslint-disable vuejs-accessibility/click-events-have-key-events -->
 <!-- eslint-disable max-len -->
 <template>
   <div class="container pt-5 pb-5">
@@ -9,25 +10,36 @@
             <h1 class="h2 mb-4">Конвертер валют</h1>
             <div class="row mb-1">
               <div class="col">
-                <label for="selectFrom">Отдаю:
-                  <select id="selectFrom" class="form-control" @change="(e)=>{
-                    setSelectedValutes({type: 'from', value: (e.target as HTMLInputElement).value})
-                  }">
-                    <option :value="currency.CharCode" v-for="currency of currenciesData" :key="currency.ID">
-                      {{`${currency.CharCode} - ${currency.Name}`}}</option>
-                  </select>
-                </label>
+                Отдаю:
+                <div class="dropdown">
+                  <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenuButton1"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                    {{`${selectedValutes.from}`}}
+                  </button>
+                  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                    <li class="dropdown-item"
+                      v-for="currency of currenciesData.filter((currency) => currency.CharCode !== selectedValutes.to && currency.CharCode !== selectedValutes.from )"
+                      :key="currency.ID" @click="handleSelectCurrency(currency.CharCode, 'from')">
+                      {{`${currency.CharCode} - ${currency.Name}`}}
+                    </li>
+                  </ul>
+                </div>
               </div>
-              <div class="col">
-                <label for="selectTo">Получаю:
-                  <select id="selectTo" class="form-control" @change="(e)=>{
-                    setSelectedValutes({type: 'to', value: (e.target as HTMLInputElement).value})
-                  }">
-                    <option :value="currency.CharCode" v-for="currency of currenciesData" :key="currency.ID">
-                      {{`${currency.CharCode} -
-                      ${currency.Name}`}}</option>
-                  </select>
-                </label>
+              <div class=" col">
+                Получаю:
+                <div class="dropdown">
+                  <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenuButton1"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                    {{`${selectedValutes.to}`}}
+                  </button>
+                  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                    <li class="dropdown-item"
+                      v-for="currency of currenciesData.filter((currency) => currency.CharCode !== selectedValutes.to && currency.CharCode !== selectedValutes.from )"
+                      :key="currency.ID" @click="handleSelectCurrency(currency.CharCode, 'to')">
+                      {{`${currency.CharCode} - ${currency.Name}`}}
+                    </li>
+                  </ul>
+                </div>
               </div>
             </div>
 
@@ -71,6 +83,7 @@ export default defineComponent({
     ...mapState({
       inputData: 'inputData',
       currenciesData: 'currenciesData',
+      selectedValutes: 'selectedValutes',
     }),
   },
   methods: {
@@ -87,11 +100,14 @@ export default defineComponent({
     handleOutput(e) {
       this.setInputData({ type: 'to', value: (e.target as HTMLInputElement).value });
     },
+    handleSelectCurrency(value: string, type: string) {
+      this.setSelectedValutes({ type, value });
+    },
   },
   mounted() {
     console.log('inputData:', this.inputData);
-    console.log('currenciesData:', this.currenciesData);
     this.fetchCurrencies();
+    console.log('currenciesData aft fetch:', this.currenciesData);
   },
   watch: {
     // currenciesData() {
@@ -101,6 +117,16 @@ export default defineComponent({
     // },
     'inputData.to': function () {
       console.log('консоль:', this.inputData.to);
+    },
+    currenciesData() {
+      this.setSelectedValutes({ type: 'from', value: this.currenciesData[0].CharCode });
+      this.setSelectedValutes({
+        type: 'to',
+        value: this.currenciesData.find((el) => el.CharCode === 'USD').CharCode,
+      });
+    },
+    selectedValutes() {
+      console.log('selectedValutes:', this.selectedValutes);
     },
   },
 

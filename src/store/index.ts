@@ -7,9 +7,9 @@ import { ICurrencyData, IStore, setInputData } from './types';
 const API_URL = 'https://www.cbr-xml-daily.ru/daily_json.js';
 
 function convertValue(fromValue: number, fromObj: ICurrencyData, toObj: ICurrencyData) {
-  console.log('fromValue:', fromValue);
-  console.log('fromObj:', fromObj);
-  console.log('toObj:', toObj);
+  // console.log('fromValue:', fromValue);
+  // console.log('fromObj:', fromObj);
+  // console.log('toObj:', toObj);
   let result = null;
 
   // считаем если число не 0
@@ -56,6 +56,7 @@ export default createStore<IStore>({
       }
     },
     setSelectedValutes(state, { type, value }: setInputData) {
+      console.log('selected valute:', type, value);
       state.selectedValutes[type] = value;
     },
     setActualDate(state, value) {
